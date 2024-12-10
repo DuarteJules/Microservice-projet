@@ -1,3 +1,4 @@
 ./microservice_order/.git
 ./microservice_product/.git
 ./usermanagerms/.git
+.DS_Store
