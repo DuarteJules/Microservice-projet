@@ -1,5 +1,5 @@
 # Utiliser une image de base Node.js
-FROM node:16
+FROM node:18
 
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Exposer le port utilisé par l'application
-EXPOSE 3000
+EXPOSE 4000
 
 # Commande pour démarrer l'application
 CMD ["npm", "start"]

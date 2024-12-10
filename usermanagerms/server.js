@@ -1,8 +1,7 @@
 const express = require("express");
 const { connectDB } = require("./config"); // Importer la configuration MongoDB
 const usersRoutes = require("./users/index");
-const orderRoutes = require('./routes/orderRoutes'); // Adjust the path
-
+const orderRoutes = require("./routes/orderRoutes"); // Adjust the path
 
 const loginRoute = require("./users/login");
 const profileRoute = require("./users/profile");
@@ -13,10 +12,9 @@ app.use(express.json());
 app.use("/login", loginRoute);
 app.use("/profile", profileRoute);
 app.use("/register", registerRoute);
-app.use('/orders', orderRoutes);
+app.use("/orders", orderRoutes);
 
 require("dotenv").config();
-
 
 app.use((req, res, next) => {
   console.log(`Requête reçue : ${req.method} ${req.url}`);
@@ -34,7 +32,7 @@ app.get("/", (req, res) => {
 });
 
 // Démarrer le serveur
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
 });
