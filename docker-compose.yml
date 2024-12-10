@@ -32,10 +32,16 @@ services:
     environment:
       - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
     labels:
-      - "traefik.http.routers.product-service.rule=PathPrefix(`/products`)"
-      - "traefik.http.middlewares.product-service-stripprefix.stripprefix.prefixes=/products"
-      - "traefik.http.routers.product-service.middlewares=product-service-stripprefix"
-      - "traefik.http.services.product-service.loadbalancer.server.port=8080" # Port exposé par ton service Java
+      - "traefik.http.routers.products-v3.rule=PathPrefix(`/v3`)"
+      - "traefik.http.routers.products-v3.priority=10"
+      - "traefik.http.services.java-service.loadbalancer.server.port=8080"
+
+      # Routeur pour toutes les autres requêtes /products (StripPrefix)
+      - "traefik.http.routers.other-products.rule=PathPrefix(`/products`)"
+      - "traefik.http.routers.other-products.priority=5"
+      - "traefik.http.routers.other-products.middlewares=strip-products"
+      - "traefik.http.middlewares.strip-products.stripprefix.prefixes=/products"
+      - "traefik.http.services.java-service.loadbalancer.server.port=8080"
 
   user-service:
     build:
@@ -45,3 +51,14 @@ services:
       - "traefik.http.middlewares.user-service-stripprefix.stripprefix.prefixes=/user"
       - "traefik.http.routers.user-service.middlewares=user-service-stripprefix"
       - "traefik.http.services.user-service.loadbalancer.server.port=4000" # Port exposé par ton service Node.js
+
+  review-service:
+    build:
+      context: ./review-python # Assure-toi d’avoir un Dockerfile dans ce dossier
+    environment:
+      - MONGO_URI=${SPRING_DATA_MONGODB_URI}
+    labels:
+      - "traefik.http.routers.review-service.rule=PathPrefix(`/review`)"
+      - "traefik.http.middlewares.review-service-stripprefix.stripprefix.prefixes=/review"
+      - "traefik.http.routers.review-service.middlewares=review-service-stripprefix"
+      - "traefik.http.services.review-service.loadbalancer.server.port=3556" # Port exposé par ton service Node.js
