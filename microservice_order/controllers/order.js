@@ -1,4 +1,5 @@
 const Order = require("../models/order");
+const { publishOrderCreated } = require("../services/mqService");
 
 // Ajouter une commande
 exports.addOrder = async (req, res) => {
@@ -12,6 +13,7 @@ exports.addOrder = async (req, res) => {
         });
 
         await newOrder.save();
+        await publishOrderCreated(newOrder);
         res.status(201).json({ message: "Commande ajoutée avec succès", order: newOrder });
     } catch (error) {
         res.status(500).json({ message: "Erreur lors de l'ajout de la commande", error: error.message });

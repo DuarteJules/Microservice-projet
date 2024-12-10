@@ -1,5 +1,6 @@
 const express = require("express");
 const { connectDB } = require("./config"); // Importer la configuration MongoDB
+const { consumeMessages } = require("./services/mqService");
 const usersRoutes = require("./users/index");
 const orderRoutes = require("./routes/orderRoutes"); // Adjust the path
 
@@ -23,6 +24,9 @@ app.use((req, res, next) => {
 });
 // Connexion à MongoDB
 connectDB();
+
+// RabbitMQ
+consumeMessages();
 
 app.use("/users", usersRoutes);
 
