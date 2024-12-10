@@ -2,15 +2,15 @@ version: "3.8"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "3000:3000"
     environment:
       NODE_ENV: production
-      JWT_SECRET: "supersecretkey" # Remplacez par votre clé secrète
+      JWT_SECRET: ${JWT_SECRET}
+      MONGO_URI: ${MONGO_URI}
     volumes:
       - .:/app
       - /app/node_modules
-
-volumes:
-  mongo-data: # Volume Docker pour persister les données de MongoDB

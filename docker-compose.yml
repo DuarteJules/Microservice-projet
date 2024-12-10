@@ -7,29 +7,41 @@ services:
       - "--entrypoints.web.address=:80" # Port HTTP
       - "--providers.docker=true" # Active la détection automatique des conteneurs Docker
       - "--api.dashboard=true" # Active le tableau de bord Traefik
+      - "--api.insecure=true"
     ports:
       - "80:80" # Port HTTP
-      - "8080:8080" # Tableau de bord Traefik
+      - "9000:9000" # Tableau de bord Traefik
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # Nécessaire pour détecter les conteneurs Docker
+    labels:
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`localhost`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
 
   order-service:
     build:
       context: ./microservice_order # Assure-toi d’avoir un Dockerfile dans ce dossier
     labels:
-      - "traefik.http.routers.node.rule=PathPrefix(`/order`)"
-      - "traefik.http.services.node.loadbalancer.server.port=3000" # Port exposé par ton service Node.js
+      - "traefik.http.routers.order-service.rule=PathPrefix(`/order`)"
+      - "traefik.http.middlewares.order-service-stripprefix.stripprefix.prefixes=/order"
+      - "traefik.http.routers.order-service.middlewares=order-service-stripprefix"
+      - "traefik.http.services.order-service.loadbalancer.server.port=3000"
 
   product-service:
     build:
       context: ./microservice_product # Assure-toi d’avoir un Dockerfile dans ce dossier
+    environment:
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
     labels:
-      - "traefik.http.routers.java.rule=PathPrefix(`/product`)"
-      - "traefik.http.services.java.loadbalancer.server.port=8080" # Port exposé par ton service Java
+      - "traefik.http.routers.product-service.rule=PathPrefix(`/products`)"
+      - "traefik.http.middlewares.product-service-stripprefix.stripprefix.prefixes=/products"
+      - "traefik.http.routers.product-service.middlewares=product-service-stripprefix"
+      - "traefik.http.services.product-service.loadbalancer.server.port=8080" # Port exposé par ton service Java
 
   user-service:
     build:
       context: ./usermanagerms # Assure-toi d’avoir un Dockerfile dans ce dossier
     labels:
-      - "traefik.http.routers.node.rule=PathPrefix(`/user`)"
-      - "traefik.http.services.node.loadbalancer.server.port=4000" # Port exposé par ton service Node.js
+      - "traefik.http.routers.user-service.rule=PathPrefix(`/user`)"
+      - "traefik.http.middlewares.user-service-stripprefix.stripprefix.prefixes=/user"
+      - "traefik.http.routers.user-service.middlewares=user-service-stripprefix"
+      - "traefik.http.services.user-service.loadbalancer.server.port=4000" # Port exposé par ton service Node.js

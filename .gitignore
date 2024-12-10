@@ -2,3 +2,4 @@
 ./microservice_product/.git
 ./usermanagerms/.git
 .DS_Store
+.env
