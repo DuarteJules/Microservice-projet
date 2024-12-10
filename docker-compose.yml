@@ -58,7 +58,12 @@ services:
     environment:
       - MONGO_URI=${SPRING_DATA_MONGODB_URI}
     labels:
+      - "traefik.http.routers.review-json.rule=PathPrefix(`/openapi.js`)"
+      - "traefik.http.routers.review-json.priority=10"
+      - "traefik.http.services.review-service.loadbalancer.server.port=3556"
+
       - "traefik.http.routers.review-service.rule=PathPrefix(`/review`)"
+      - "traefik.http.routers.review-service.priority=5"
       - "traefik.http.middlewares.review-service-stripprefix.stripprefix.prefixes=/review"
       - "traefik.http.routers.review-service.middlewares=review-service-stripprefix"
       - "traefik.http.services.review-service.loadbalancer.server.port=3556" # Port exposé par ton service Node.js
