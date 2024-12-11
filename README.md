@@ -35,3 +35,9 @@ JWT_SECRET=le jwt
 ```shell
 docker compose up
 ```
+
+Lien vers les différentes endpoints :
+- http://localhost/dashboard/
+
+Microservice poduct : http://localhost/product/swagger-ui/index.html
+Review : http://localhost/product/swagger-ui/index.html
